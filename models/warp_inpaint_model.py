@@ -43,7 +43,7 @@ class WarpInpaintModel(torch.nn.Module):
         self.run_dir = run_dir_root / f"{dt_string}_{config['inpainting_prompt'].replace(' ', '_')[:40]}"
         self.run_dir.mkdir(parents=True, exist_ok=True)
 
-        self.device = config["device"]
+        self.device =  torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.config = config
         self.inpainting_prompt = config["inpainting_prompt"]
 
