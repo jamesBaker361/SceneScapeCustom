@@ -8,5 +8,7 @@ transformers
 accelerate
 timm
 einops
-omegaconf
+git+https://github.com/omry/omegaconf.git
+experiment-helpers
 av
+numpy==1.22
