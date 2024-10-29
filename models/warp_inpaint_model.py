@@ -13,7 +13,10 @@ from diffusers import StableDiffusionInpaintPipeline, DDIMScheduler, Autoencoder
 from einops import rearrange
 from kornia.geometry import PinholeCamera, transform_points, convert_points_from_homogeneous
 from kornia.morphology import dilation, opening
-
+from pytorch3d.renderer import (
+    PerspectiveCameras,
+    look_at_rotation,
+)
 from torchvision.transforms import ToTensor, ToPILImage, Resize
 
 from models.mesh_renderer import Renderer
@@ -49,6 +52,7 @@ class WarpInpaintModel(torch.nn.Module):
             torch_dtype=torch.float16,
             revision="fp16",
         )
+        print(self.inpainting_pipeline.scheduler.config)
         self.inpainting_pipeline.scheduler = DDIMScheduler.from_config(self.inpainting_pipeline.scheduler.config)
         self.inpainting_pipeline = self.inpainting_pipeline.to(self.device)
         if self.config["use_xformers"]:
