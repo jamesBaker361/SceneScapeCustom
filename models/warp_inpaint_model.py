@@ -10,6 +10,7 @@ import torch.nn.functional as F
 import trimesh
 from PIL import Image
 from diffusers import StableDiffusionInpaintPipeline, DDIMScheduler, AutoencoderKL
+from .custom_ddim_scheduler import CustomDDIMScheduler
 from einops import rearrange
 from kornia.geometry import PinholeCamera, transform_points, convert_points_from_homogeneous
 from kornia.morphology import dilation, opening
@@ -57,11 +58,11 @@ class WarpInpaintModel(torch.nn.Module):
         remove=set()
         for k in possible_args.keys():
             try:
-                DDIMScheduler(**{k:possible_args[k]})
+                CustomDDIMScheduler(**{k:possible_args[k]})
             except TypeError:
                 remove.add(k)
         possible_args={k:v for k,v in possible_args.items() if k not in remove}
-        self.inpainting_pipeline.scheduler=DDIMScheduler(**possible_args)
+        self.inpainting_pipeline.scheduler=CustomDDIMScheduler(**possible_args)
         self.inpainting_pipeline = self.inpainting_pipeline.to(self.device)
         if self.config["use_xformers"]:
             self.inpainting_pipeline.set_use_memory_efficient_attention_xformers(True)
