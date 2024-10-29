@@ -104,4 +104,4 @@ class CustomDDIMScheduler(DDIMScheduler):
 
         # setable values
         self.num_inference_steps = None
-        self.timesteps = torch.from_numpy(np.arange(num_train_timesteps - 1, -1, -1, dtype=np.int64).copy())
+        self.timesteps = torch.tensor([n for n in range(num_train_timesteps,-1,-1)])
