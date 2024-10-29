@@ -47,12 +47,18 @@ class WarpInpaintModel(torch.nn.Module):
         self.config = config
         self.inpainting_prompt = config["inpainting_prompt"]
 
-        self.inpainting_pipeline = StableDiffusionInpaintPipeline.from_pretrained(
-            config["stable_diffusion_checkpoint"],
-            safety_checker=None,
-            torch_dtype=torch.float16,
-            revision="fp16",
-        )
+        if torch.cuda.is_available():
+            self.inpainting_pipeline = StableDiffusionInpaintPipeline.from_pretrained(
+                config["stable_diffusion_checkpoint"],
+                safety_checker=None,
+                torch_dtype=torch.float16,
+                revision="fp16",
+            )
+        else:
+            self.inpainting_pipeline = StableDiffusionInpaintPipeline.from_pretrained(
+                config["stable_diffusion_checkpoint"],
+                safety_checker=None,
+            )
         print(self.inpainting_pipeline.scheduler.config)
         possible_args=dict(self.inpainting_pipeline.scheduler.config)
         remove=set()
