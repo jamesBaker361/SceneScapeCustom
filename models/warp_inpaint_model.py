@@ -53,7 +53,9 @@ class WarpInpaintModel(torch.nn.Module):
             revision="fp16",
         )
         print(self.inpainting_pipeline.scheduler.config)
-        self.inpainting_pipeline.scheduler = DDIMScheduler.from_config(self.inpainting_pipeline.scheduler.config)
+        self.inpainting_pipeline.scheduler = DDIMScheduler(
+            **self.inpainting_pipeline.scheduler.config
+        )
         self.inpainting_pipeline = self.inpainting_pipeline.to(self.device)
         if self.config["use_xformers"]:
             self.inpainting_pipeline.set_use_memory_efficient_attention_xformers(True)
