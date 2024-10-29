@@ -1,3 +1,6 @@
+from experiment_helpers.gpu_details import print_details
+print_details()
+
 import copy
 import gc
 import random
@@ -14,6 +17,7 @@ from tqdm import tqdm
 from models.warp_inpaint_model import WarpInpaintModel
 from util.finetune_utils import finetune_depth_model, finetune_decoder
 from util.general_utils import apply_depth_colormap, save_video
+
 
 
 def evaluate(model):
@@ -116,8 +120,11 @@ def run(config):
 
     evaluate(model)
 
+    model.save_mesh("scenscape")
+
 
 if __name__ == "__main__":
+    
 
     parser = ArgumentParser()
     parser.add_argument(
@@ -131,6 +138,7 @@ if __name__ == "__main__":
         help="Config path",
     )
     args = parser.parse_args()
+    print(args)
     base_config = OmegaConf.load(args.base_config)
     example_config = OmegaConf.load(args.example_config)
     config = OmegaConf.merge(base_config, example_config)

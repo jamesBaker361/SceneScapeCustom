@@ -13,10 +13,7 @@ from diffusers import StableDiffusionInpaintPipeline, DDIMScheduler, Autoencoder
 from einops import rearrange
 from kornia.geometry import PinholeCamera, transform_points, convert_points_from_homogeneous
 from kornia.morphology import dilation, opening
-from pytorch3d.renderer import (
-    PerspectiveCameras,
-    look_at_rotation,
-)
+
 from torchvision.transforms import ToTensor, ToPILImage, Resize
 
 from models.mesh_renderer import Renderer
