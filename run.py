@@ -118,9 +118,12 @@ def run(config):
         torch.cuda.empty_cache()
         gc.collect()
 
+    print("evaluation")
     evaluate(model)
 
-    model.save_mesh("scenscape")
+    print("saving")
+    model.save_mesh("scenescape")
+    print("all done :)))")
 
 
 if __name__ == "__main__":
