@@ -54,11 +54,11 @@ def evaluate_epoch(model, epoch):
     (save_root / "warped_images").mkdir(exist_ok=True, parents=True)
     (save_root / "disparities").mkdir(exist_ok=True, parents=True)
 
-    ToPILImage()(model.images[epoch][0]).save(save_root / "frames" / f"{epoch}.png")
-    ToPILImage()(model.images_orig_decoder[epoch][0]).save(save_root / "images_orig_decoder" / f"{epoch}.png")
-    ToPILImage()(model.masks[epoch][0]).save(save_root / "masks" / f"{epoch}.png")
-    ToPILImage()(model.warped_images[epoch][0]).save(save_root / "warped_images" / f"{epoch}.png")
-    ToPILImage()(disparity_colored[0]).save(save_root / "disparities" / f"{epoch}.png")
+    ToPILImage()(model.images[epoch][0]).save(f"{save_root}/frames/{epoch}.png")
+    ToPILImage()(model.images_orig_decoder[epoch][0]).save(f"{save_root}/images_orig_decoder/{epoch}.png")
+    ToPILImage()(model.masks[epoch][0]).save(f"{save_root}/masks/{epoch}.png")
+    ToPILImage()(model.warped_images[epoch][0]).save(f"{save_root}/warped_images/{epoch}.png")
+    ToPILImage()(disparity_colored[0]).save(f"{save_root}/disparities/{epoch}.png")
 
     if epoch == 0:
         with open(Path(model.run_dir) / "config.yaml", "w") as f:
