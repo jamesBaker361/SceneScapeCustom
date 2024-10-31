@@ -73,7 +73,8 @@ def run(config):
     np.random.seed(seed)
     torch.manual_seed(seed)
     print(f"running with seed: {seed}.")
-    model = WarpInpaintModel(config).to(config["device"])
+    device="cuda" if torch.cuda.is_available() else "cpu"
+    model = WarpInpaintModel(config).to(device)
     evaluate_epoch(model, 0)
     scaler = GradScaler(enabled=config["enable_mix_precision"])
     for epoch in tqdm(range(1, config["frames"] + 1)):
