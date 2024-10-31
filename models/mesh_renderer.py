@@ -41,7 +41,7 @@ class MeshRendererWithDepth(nn.Module):
 
 class Renderer:
     def __init__(self, config, image_size=512, antialiasing_factor=1):
-        self.device = config["device"]
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
         fl = antialiasing_factor * config["init_focal_length"]
         principal_point = image_size / 2
         self.K = torch.tensor(
