@@ -65,7 +65,7 @@ def evaluate_epoch(model, epoch):
             OmegaConf.save(model.config, f)
 
 
-def run(config):
+def run(config,name:str):
     seed = config["seed"]
     if seed == -1:
         seed = np.random.randint(2 ** 32)
@@ -123,7 +123,7 @@ def run(config):
     evaluate(model)
 
     print("saving")
-    model.save_mesh("scenescape")
+    model.save_mesh(name)
     print("all done :)))")
 
 
@@ -141,10 +141,11 @@ if __name__ == "__main__":
         default="./config/example_configs/dungeon.yaml",
         help="Config path",
     )
+    parser.add_argument("--name",type=str,default="scenescape_result")
     args = parser.parse_args()
     print(args)
     base_config = OmegaConf.load(args.base_config)
     example_config = OmegaConf.load(args.example_config)
     config = OmegaConf.merge(base_config, example_config)
 
-    run(config)
+    run(config,args.name)
