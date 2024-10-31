@@ -611,9 +611,10 @@ class WarpInpaintModel(torch.nn.Module):
         extrinsics = torch.eye(4, device=R.device).unsqueeze(0)
         extrinsics[:, :3, :3] = R
         extrinsics[:, :3, 3] = T
-        h = torch.tensor([512], device="cuda")
-        w = torch.tensor([512], device="cuda")
-        K = torch.eye(4)[None].to("cuda")
+        device="cuda" if torch.cuda.is_available() else "cpu"
+        h = torch.tensor([512], device=device)
+        w = torch.tensor([512], device=device)
+        K = torch.eye(4)[None].to(device)
         K[0, 0, 2] = 256
         K[0, 1, 2] = 256
         K[0, 0, 0] = self.config["init_focal_length"]
@@ -750,6 +751,7 @@ class WarpInpaintModel(torch.nn.Module):
 
         # move camera backwards
         speed = self.camera_speed_factor * 0.1875
-        next_camera.T += speed * torch.tensor([[0.0, 0.0, 1.0]], device="cuda")
+        device="cuda" if torch.cuda.is_available() else "cpu"
+        next_camera.T += speed * torch.tensor([[0.0, 0.0, 1.0]], device=device)
 
         return next_camera
