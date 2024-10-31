@@ -1,3 +1,7 @@
+conda init
+eval "$(conda shell.bash hook)"
+conda deactivate
+conda remove -n scenescape --all -y
 pip cache purge
 conda clean --all -y
 conda create --name scenescape python=3.10 -y
