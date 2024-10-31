@@ -11,4 +11,4 @@ einops
 git+https://github.com/omry/omegaconf.git
 experiment-helpers
 av
-numpy==1.22
+numpy==1.26
