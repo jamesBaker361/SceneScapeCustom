@@ -173,6 +173,6 @@ if __name__ == "__main__":
             new_config["runs_dir"]=new_config["runs_dir"]+f"_{j}"
             new_config["inpainting_prompt"]=row["caption"]
             image=row["image"]
-            run(new_config,None,image)
+            run(new_config,args.name+f"_{j}",image)
     else:
         run(config,args.name,image)
