@@ -13,11 +13,13 @@ from omegaconf import OmegaConf
 from torch.cuda.amp import GradScaler
 from torchvision.transforms import ToPILImage
 from tqdm import tqdm
+from PIL import Image
 
 from models.warp_inpaint_model import WarpInpaintModel
 from util.finetune_utils import finetune_depth_model, finetune_decoder
 from util.general_utils import apply_depth_colormap, save_video
 import os
+from datasets import load_dataset
 
 
 
@@ -66,7 +68,7 @@ def evaluate_epoch(model, epoch):
             OmegaConf.save(model.config, f)
 
 
-def run(config,name:str):
+def run(config,name:str,image:Image.Image):
     seed = config["seed"]
     if seed == -1:
         seed = np.random.randint(2 ** 32)
@@ -75,7 +77,7 @@ def run(config,name:str):
     torch.manual_seed(seed)
     print(f"running with seed: {seed}.")
     device="cuda" if torch.cuda.is_available() else "cpu"
-    model = WarpInpaintModel(config).to(device)
+    model = WarpInpaintModel(config,image=image).to(device)
     evaluate_epoch(model, 0)
     scaler = GradScaler(enabled=config["enable_mix_precision"])
     print("run.py line 81")
@@ -143,18 +145,34 @@ if __name__ == "__main__":
         default="./config/example_configs/dungeon.yaml",
         help="Config path",
     )
+    parser.add_argument("--use_dataset",action="store_true")
+    parser.add_argument("--dataset_name",type=str,default="jlbaker361/classrooms")
+    parser.add_argument("--start",default=0,type=int)
+    parser.add_argument("--end",type=int,default=10)
     parser.add_argument("--name",type=str,default="scenescape_result")
     parser.add_argument("--seed",type=int,default=None)
     parser.add_argument("--runs_dir",type=str,default=None)
+    parser.add_argument("--image_path",type=str,default=None)
     args = parser.parse_args()
     print(args)
     base_config = OmegaConf.load(args.base_config)
     example_config = OmegaConf.load(args.example_config)
     config = OmegaConf.merge(base_config, example_config)
-
+    image=None
+    if args.image_path is not None:
+        image=Image.open(args.image_path)
     if args.seed is not None:
         config["seed"]=args.seed
-    if args.run_dir is not None:
-        config["run_dir"]=args.run_dir
-
-    run(config,args.name)
+    if args.runs_dir is not None:
+        config["runs_dir"]=args.run_dir
+    if args.use_dataset:
+        for j,row in enumerate(load_dataset(args.dataset_name)):
+            if j<args.start or j>=args.end:
+                continue
+            new_config=OmegaConf.merge(config)
+            new_config["runs_dir"]=new_config["runs_dir"]+f"_{j}"
+            new_config["inpainting_prompt"]=row["caption"]
+            image=row["image"]
+            run(new_config,None,image)
+    else:
+        run(config,args.name,image)
