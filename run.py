@@ -17,6 +17,7 @@ from tqdm import tqdm
 from models.warp_inpaint_model import WarpInpaintModel
 from util.finetune_utils import finetune_depth_model, finetune_decoder
 from util.general_utils import apply_depth_colormap, save_video
+import os
 
 
 
@@ -46,13 +47,13 @@ def evaluate_epoch(model, epoch):
     disparity = model.disparities[epoch]
     disparity_colored = apply_depth_colormap(disparity[0].permute(1, 2, 0))
     disparity_colored = disparity_colored.clone().permute(2, 0, 1).unsqueeze(0).float()
-    save_root = Path(model.run_dir) / "images"
-    save_root.mkdir(exist_ok=True, parents=True)
-    (save_root / "frames").mkdir(exist_ok=True, parents=True)
-    (save_root / "images_orig_decoder").mkdir(exist_ok=True, parents=True)
-    (save_root / "masks").mkdir(exist_ok=True, parents=True)
-    (save_root / "warped_images").mkdir(exist_ok=True, parents=True)
-    (save_root / "disparities").mkdir(exist_ok=True, parents=True)
+    save_root = os.path.join(model.run_dir, "images")
+    os.makedirs(save_root, exist_ok=True)
+    os.makedirs(os.path.join(save_root, "frames"), exist_ok=True)
+    os.makedirs(os.path.join(save_root, "images_orig_decoder"), exist_ok=True)
+    os.makedirs(os.path.join(save_root, "masks"), exist_ok=True)
+    os.makedirs(os.path.join(save_root, "warped_images"), exist_ok=True)
+    os.makedirs(os.path.join(save_root, "disparities"), exist_ok=True)
 
     ToPILImage()(model.images[epoch][0]).save(f"{save_root}/frames/{epoch}.png")
     ToPILImage()(model.images_orig_decoder[epoch][0]).save(f"{save_root}/images_orig_decoder/{epoch}.png")
@@ -77,6 +78,7 @@ def run(config,name:str):
     model = WarpInpaintModel(config).to(device)
     evaluate_epoch(model, 0)
     scaler = GradScaler(enabled=config["enable_mix_precision"])
+    print("run.py line 81")
     for epoch in tqdm(range(1, config["frames"] + 1)):
         if config["use_splatting"]:
             warp_output = model.warp_splatting(epoch)
