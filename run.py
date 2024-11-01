@@ -144,10 +144,17 @@ if __name__ == "__main__":
         help="Config path",
     )
     parser.add_argument("--name",type=str,default="scenescape_result")
+    parser.add_argument("--seed",type=int,default=None)
+    parser.add_argument("--runs_dir",type=str,default=None)
     args = parser.parse_args()
     print(args)
     base_config = OmegaConf.load(args.base_config)
     example_config = OmegaConf.load(args.example_config)
     config = OmegaConf.merge(base_config, example_config)
+
+    if args.seed is not None:
+        config["seed"]=args.seed
+    if args.run_dir is not None:
+        config["run_dir"]=args.run_dir
 
     run(config,args.name)
