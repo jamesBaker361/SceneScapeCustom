@@ -30,7 +30,7 @@ from util.midas_utils import dpt_transform
 
 
 class WarpInpaintModel(torch.nn.Module):
-    def __init__(self, config,image:Image.Image=None):
+    def __init__(self, config,image:Image.Image):
         super().__init__()
         if config["use_splatting"]:
             sys.path.append("util/softmax-splatting")
@@ -83,10 +83,9 @@ class WarpInpaintModel(torch.nn.Module):
                 num_inference_steps=self.config["num_inpainting_steps"],
                 guidance_scale=self.config["classifier_free_guidance_scale"],
             ).images[0]
-            self.image_tensor = ToTensor()(image).unsqueeze(0).to(self.device)
         else:
             image=image.resize((512,512))
-
+        self.image_tensor = ToTensor()(image).unsqueeze(0).to(self.device)
         self.depth_model = torch.hub.load("intel-isl/MiDaS", "DPT_Large").to(self.device)
 
         with torch.no_grad():
