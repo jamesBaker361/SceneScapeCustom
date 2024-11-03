@@ -39,10 +39,10 @@ def evaluate(model):
         model.save_mesh("full_mesh")
 
     video = (255 * torch.cat(model.images, dim=0)).to(torch.uint8).detach().cpu()
-    video_reverse = (255 * torch.cat(model.images[::-1], dim=0)).to(torch.uint8).detach().cpu()
+    #video_reverse = (255 * torch.cat(model.images[::-1], dim=0)).to(torch.uint8).detach().cpu()
 
     save_video(video, save_root / "output.mp4", fps=fps)
-    save_video(video_reverse, save_root / "output_reverse.mp4", fps=fps)
+    #save_video(video_reverse, save_root / "output_reverse.mp4", fps=fps)
 
 
 def evaluate_epoch(model, epoch):
@@ -166,7 +166,7 @@ if __name__ == "__main__":
     if args.runs_dir is not None:
         config["runs_dir"]=args.run_dir
     if args.use_dataset:
-        for j,row in enumerate(load_dataset(args.dataset_name)):
+        for j,row in enumerate(load_dataset(args.dataset_name,split="train")):
             if j<args.start or j>=args.end:
                 continue
             new_config=OmegaConf.merge(config)
