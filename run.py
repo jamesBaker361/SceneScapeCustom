@@ -153,12 +153,15 @@ if __name__ == "__main__":
     parser.add_argument("--seed",type=int,default=None)
     parser.add_argument("--runs_dir",type=str,default=None)
     parser.add_argument("--image_path",type=str,default=None)
+    parser.add_argument("--frames",type=int,default=None)
     args = parser.parse_args()
     print(args)
     base_config = OmegaConf.load(args.base_config)
     example_config = OmegaConf.load(args.example_config)
     config = OmegaConf.merge(base_config, example_config)
     image=None
+    if args.frames is not None:
+        config["frames"]=args.frames
     if args.image_path is not None:
         image=Image.open(args.image_path)
     if args.seed is not None:
